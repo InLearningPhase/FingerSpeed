@@ -24,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
     private CountDownTimer countDownTimer;
 
-    private long iniCount = 10000;
+    private long iniCount = 60000;
     private int timeInterval = 1000;
-    private int remainTime = 10;
+    private int remainTime = 60;
 
     private int aThousand = 10;
 
