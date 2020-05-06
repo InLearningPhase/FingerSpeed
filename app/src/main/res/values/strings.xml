@@ -3,4 +3,7 @@
     <string name="time">Time</string>
     <string name="thousand">10</string>
     <string name="button">Tap</string>
+    <string name="alertTitle">Game Finished</string>
+    <string name="alert_msg">Congratulations</string>
+
 </resources>

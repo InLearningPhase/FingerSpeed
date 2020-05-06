@@ -1,7 +1,9 @@
 package com.example.fingerspeed;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -40,8 +42,22 @@ public class MainActivity extends AppCompatActivity {
 
                 aThousand--;
                 thousandTextView.setText(aThousand + "");
+
                 if (remainTime > 0 && aThousand <= 0) {
-                    Toast.makeText(MainActivity.this, "You Won!", Toast.LENGTH_SHORT).show();
+
+                   // Toast.makeText(MainActivity.this, "You Won!", Toast.LENGTH_SHORT).show();
+                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+
+                            .setTitle(R.string.alertTitle)
+                            .setMessage(R.string.alert_msg)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            }).show();
+
                 }
             }
         });
@@ -50,8 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTick(long millisUntilFinished) {
+
                 remainTime = (int) millisUntilFinished / 1000;
                 timerTextView.setText(remainTime + "");
+
             }
 
             @Override
