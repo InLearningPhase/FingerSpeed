@@ -19,9 +19,9 @@ public class MainActivity extends AppCompatActivity {
 
     private CountDownTimer countDownTimer;
 
-    private long iniCount = 60000;
+    private long iniCount = 10000;
     private int timeInterval = 1000;
-    private int remainTime = 60;
+    private int remainTime = 10;
 
     private int aThousand = 10;
 
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         timerTextView = findViewById(R.id.txtTimer);
         thousandTextView = findViewById(R.id.txtThousand);
         tapButton = findViewById(R.id.btnTap);
+
         thousandTextView.setText(aThousand + "");
 
         tapButton.setOnClickListener(new View.OnClickListener() {
@@ -41,28 +42,71 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 aThousand--;
-                thousandTextView.setText(aThousand + "");
+                thousandTextView.setText(Integer.toString(aThousand));
 
                 if (remainTime > 0 && aThousand <= 0) {
 
-                   // Toast.makeText(MainActivity.this, "You Won!", Toast.LENGTH_SHORT).show();
-                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                    if (countDownTimer != null) {
 
-                            .setTitle(R.string.alertTitle)
-                            .setMessage(R.string.alert_msg)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            }).show();
+                        countDownTimer.cancel();
+                        countDownTimer = null;
+                    }
+                    showAlert("Game Finished", "You Won!");
 
                 }
             }
         });
 
-            countDownTimer = new CountDownTimer(iniCount, timeInterval) {
+        gameStart();
+    }
+
+    private void resetGame() {
+
+        if (countDownTimer != null) {
+
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+        aThousand = 10;
+        thousandTextView.setText(Integer.toString(aThousand));
+
+        timerTextView.setText(Integer.toString(remainTime));
+
+        gameStart();
+
+    }
+
+    private void showAlert(String title, String msg) {
+
+        // Toast.makeText(MainActivity.this, "You Won!", Toast.LENGTH_SHORT).show();
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton("Play Again!", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        resetGame();
+
+                    }
+                })
+                .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        finish();
+
+                    }
+                })
+                .show();
+        alertDialog.setCancelable(false);
+    }
+
+    private void gameStart() {
+
+        countDownTimer = new CountDownTimer(iniCount, timeInterval) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -75,9 +119,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
 
-                Toast.makeText(MainActivity.this, "Countdown Finished", Toast.LENGTH_SHORT).show();
+                showAlert("Game Finished", "You lost!");
+
             }
         };
         countDownTimer.start();
+
     }
 }
