@@ -1,11 +1,13 @@
 package com.example.fingerspeed;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
     private int aThousand = 10;
 
+    private final String REMAIN_TIME_KEY = "remaining time key";
+    private final String THOUSAND_KEY = "thousand key";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +40,15 @@ public class MainActivity extends AppCompatActivity {
         tapButton = findViewById(R.id.btnTap);
 
         thousandTextView.setText(aThousand + "");
+
+        if (savedInstanceState != null) {
+
+            remainTime = savedInstanceState.getInt(REMAIN_TIME_KEY);
+            aThousand = savedInstanceState.getInt(THOUSAND_KEY);
+
+            restoreGame();
+
+        }
 
         tapButton.setOnClickListener(new View.OnClickListener() {
 
@@ -57,7 +71,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        gameStart();
+        if (savedInstanceState == null) {
+
+            countDownTimer = new CountDownTimer(iniCount, timeInterval) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                    remainTime = (int) millisUntilFinished / 1000;
+                    timerTextView.setText(remainTime + "");
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    showAlert("Game Finished", "You lost!");
+
+                }
+            };
+            countDownTimer.start();
+
+        }
     }
 
     private void resetGame() {
@@ -72,7 +107,24 @@ public class MainActivity extends AppCompatActivity {
 
         timerTextView.setText(Integer.toString(remainTime));
 
-        gameStart();
+        countDownTimer = new CountDownTimer(iniCount, timeInterval) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                remainTime = (int) millisUntilFinished / 1000;
+                timerTextView.setText(remainTime + "");
+
+            }
+
+            @Override
+            public void onFinish() {
+
+                showAlert("Game Finished", "You lost!");
+
+            }
+        };
+        countDownTimer.start();
 
     }
 
@@ -104,14 +156,30 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setCancelable(false);
     }
 
-    private void gameStart() {
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
 
-        countDownTimer = new CountDownTimer(iniCount, timeInterval) {
+        super.onSaveInstanceState(outState);
 
+        outState.putInt(REMAIN_TIME_KEY, remainTime);
+        outState.putInt(THOUSAND_KEY, aThousand);
+        countDownTimer.cancel();
+
+    }
+
+    private void restoreGame() {
+
+        int restoreRemainTime = remainTime;
+        int restoreThousand = aThousand;
+
+        timerTextView.setText(restoreRemainTime + "");
+        thousandTextView.setText(restoreThousand + "");
+
+        countDownTimer = new CountDownTimer((long)remainTime*1000, timeInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
 
-                remainTime = (int) millisUntilFinished / 1000;
+                remainTime = (int)millisUntilFinished / 1000;
                 timerTextView.setText(remainTime + "");
 
             }
@@ -124,6 +192,5 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         countDownTimer.start();
-
     }
 }
