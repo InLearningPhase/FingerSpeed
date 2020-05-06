@@ -8,6 +8,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PersistableBundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -192,5 +195,28 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         countDownTimer.start();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        return true;
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.info_item) {
+
+            Toast.makeText(MainActivity.this, "Current Version:- " + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
+
+        }
+
+        return true;
+
     }
 }
